@@ -23,10 +23,18 @@ var editor_camera : Camera3D
 
 var overlay_root: Control
 
+var editor_menu : NodeContextRegistryEditorMenu
+
+# ---------------------------------------------------------------------------
+
+func _exit_tree():
+	editor_menu._exit_tree()
+
 # ---------------------------------------------------------------------------
 
 func _enter_tree() -> void:
-	set_process(true)
+	editor_menu = NodeContextRegistryEditorMenu.new(self)
+	
 	var viewport_3d : SubViewport = get_editor_interface().get_editor_viewport_3d()
 	overlay_root = Control.new()
 	overlay_root.name = "SpriteContextOverlay"
@@ -39,9 +47,6 @@ func _enter_tree() -> void:
 	selection_service = _SelectionService.new(get_editor_interface())
 	viewport_service = _ViewportService.new()
 	action_service = _ActionService.new()
-	action_service.register_action(_DuplicateAction.new(self))
-	action_service.register_action(_FocusAction.new(self))
-	action_service.register_action(_DeleteAction.new(self))
 	
 	context_menu = _ContextMenu.new()
 	overlay_root.add_child(context_menu)
@@ -51,10 +56,8 @@ func _enter_tree() -> void:
 	
 # ---------------------------------------------------------------------------
 
-func _show_context_menu(camera : Camera3D) -> void:
-	context_menu.show_for_context(
-		action_service.get_available_actions()
-	)
+func _show_context_menu(actions : Array) -> void:
+	context_menu.show_for_context(actions)
 
 # ---------------------------------------------------------------------------
 
@@ -66,9 +69,14 @@ func _hide_context_menu() -> void:
 func _on_selection_changed(node : Node) -> void:
 	print("_on_selection_changed", node)
 	print("# ---------------------------------------------------------------------------")
-	
-	if node:
-		_show_context_menu(editor_camera)
+	if !node:
+		_hide_context_menu()
+		return
+
+	var handler = NodeContextRegistry.get_handler(node)
+	print("handler: ", handler)
+	if handler:
+		_show_context_menu(NodeContextRegistry.get_actions(node))
 		var pos : Vector2 = editor_camera.unproject_position(
 			node.global_position
 		)

@@ -22,9 +22,8 @@ func show_for_context(actions : Array):
 	for action : EditorAction in actions:
 		var button : Button = Button.new()
 		button.text = action.get_name()
-		button.pressed.connect(
-			func():	action_selected.emit(action)
-		)
+		button.mouse_filter = Control.MOUSE_FILTER_PASS
+		button.pressed.connect(_on_button_pressed.bind(button.text))
 		vbox.add_child(button)
 	
 	visible = true
@@ -37,8 +36,9 @@ func hide() -> void:
 # ---------------------------------------------------------------------------
 
 func _on_button_pressed(action):
-	visible = false
+	print("button ", action, " pressed")
 	action_selected.emit(action)
+	visible = false
 
 # ---------------------------------------------------------------------------
 # ---------------------------------------------------------------------------
