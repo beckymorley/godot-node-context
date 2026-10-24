@@ -42,17 +42,11 @@ static func register(file_name : String, handler : NodeContextHandler):
 	if handler and !handlers.has(file_name):
 		handlers.get_or_add(file_name, {"handler" : handler, "actions": []})
 
-	for action : EditorAction in handler.get_actions():
-		handlers[file_name]["actions"].push_back(action)
-
 # ---------------------------------------------------------------------------
 
 static func get_handler(node):
-	print("handlers: ", handlers)
-	print("node: ", node)
 	for file_name in handlers:
 		if handlers[file_name]["handler"].can_handle(node):
-			print("get handler: ", handlers[file_name]["handler"])
 			return handlers[file_name]["handler"]
 
 	return null
@@ -60,9 +54,9 @@ static func get_handler(node):
 # ---------------------------------------------------------------------------
 
 static func get_actions(node) -> Array:
-	for file_name in handlers:
-		if handlers[file_name]["handler"].can_handle(node):
-			return handlers[file_name]["actions"]
+	var handler = get_handler(node)
+	if handler:
+		return handler.get_actions()
 
 	return []
 

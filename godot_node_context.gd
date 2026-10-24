@@ -21,8 +21,6 @@ var selected_node : Node3D
 
 var editor_camera : Camera3D
 
-var overlay_root: Control
-
 var editor_menu : NodeContextRegistryEditorMenu
 
 # ---------------------------------------------------------------------------
@@ -68,12 +66,12 @@ func _on_selection_changed(node : Node) -> void:
 		_hide_context_menu()
 		return
 
-	var handler = NodeContextRegistry.get_handler(node)
-	print("handler: ", handler)
-	if handler:
-		_show_context_menu(NodeContextRegistry.get_actions(node))
+	selected_node = node
+	var context_actions = NodeContextRegistry.get_actions(selected_node)
+	if context_actions.size() > 0:
+		_show_context_menu(context_actions)
 		var pos : Vector2 = editor_camera.unproject_position(
-			node.global_position
+			selected_node.global_position
 		)
 		context_menu.position = pos
 	else:
@@ -82,6 +80,7 @@ func _on_selection_changed(node : Node) -> void:
 # ---------------------------------------------------------------------------
 
 func _on_action_selected(action : EditorAction) -> void:
+	print("action on ", selected_node)
 	action.execute(
 		action_service.create_context(selected_node)
 	)
