@@ -54,6 +54,11 @@ func _show_context_menu(actions : Array) -> void:
 
 # ---------------------------------------------------------------------------
 
+func _handles(object : Object) -> bool:
+	return object is Node3D
+
+# ---------------------------------------------------------------------------
+
 func _hide_context_menu() -> void:
 	context_menu.hide()
 
@@ -65,7 +70,11 @@ func _on_selection_changed(node : Node) -> void:
 	if !node:
 		_hide_context_menu()
 		return
-
+	
+	if !_viewport_input_pending:
+		_hide_context_menu()
+		return 
+	
 	selected_node = node
 	var context_actions = NodeContextRegistry.get_actions(selected_node)
 	if context_actions.size() > 0:
@@ -76,6 +85,8 @@ func _on_selection_changed(node : Node) -> void:
 		context_menu.position = pos
 	else:
 		_hide_context_menu()
+		
+	_viewport_input_pending = false
 
 # ---------------------------------------------------------------------------
 
@@ -84,7 +95,18 @@ func _on_action_selected(action : EditorAction) -> void:
 	action.execute(
 		action_service.create_context(selected_node)
 	)
+	
+# ---------------------------------------------------------------------------
 
+var _viewport_input_pending := false
+func _forward_3d_gui_input(viewport_camera: Camera3D, event: InputEvent) -> int:
+	if event is InputEventMouseButton \
+	and event.pressed:
+
+		_viewport_input_pending = true
+
+	return EditorPlugin.AFTER_GUI_INPUT_PASS
+	
 # ---------------------------------------------------------------------------
 # ---------------------------------------------------------------------------
 # ---------------------------------------------------------------------------
