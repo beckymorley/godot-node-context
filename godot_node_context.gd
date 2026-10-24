@@ -36,12 +36,7 @@ func _enter_tree() -> void:
 	editor_menu = NodeContextRegistryEditorMenu.new(self)
 	
 	var viewport_3d : SubViewport = get_editor_interface().get_editor_viewport_3d()
-	overlay_root = Control.new()
-	overlay_root.name = "SpriteContextOverlay"
-	overlay_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	overlay_root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	viewport_3d.add_child(overlay_root)
-	
+	var parent : Node = viewport_3d.get_parent().get_parent()
 	editor_camera = viewport_3d.get_camera_3d()
 	
 	selection_service = _SelectionService.new(get_editor_interface())
@@ -49,7 +44,7 @@ func _enter_tree() -> void:
 	action_service = _ActionService.new()
 	
 	context_menu = _ContextMenu.new()
-	overlay_root.add_child(context_menu)
+	parent.add_child(context_menu)
 	
 	selection_service.selection_changed.connect(_on_selection_changed)
 	context_menu.action_selected.connect(_on_action_selected)

@@ -14,6 +14,8 @@ func _init(p_plugin : EditorPlugin) -> void:
 	button.pressed.connect(_on_button_pressed)
 	plugin.add_control_to_container(EditorPlugin.CONTAINER_SPATIAL_EDITOR_MENU, button)
 
+	NodeContextRegistry.discover_handlers("res://editor_tools/context_handlers")
+	
 # ---------------------------------------------------------------------------
 
 func _exit_tree() -> void:

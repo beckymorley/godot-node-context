@@ -11,23 +11,26 @@ var vbox : VBoxContainer = VBoxContainer.new()
 func _init() -> void:
 	visible = false
 	add_child(vbox)
-	mouse_filter = Control.MOUSE_FILTER_STOP
-
+	
 # ---------------------------------------------------------------------------
 
 func show_for_context(actions : Array):
+	
+	visible = true
 	for child : Node in vbox.get_children():
 		child.queue_free()
 	
 	for action : EditorAction in actions:
 		var button : Button = Button.new()
 		button.text = action.get_name()
-		button.mouse_filter = Control.MOUSE_FILTER_PASS
-		button.pressed.connect(_on_button_pressed.bind(button.text))
+		button.mouse_entered.connect(
+			func():
+				print("HOVER:", button.text)
+		)
+
+		button.pressed.connect(_on_button_pressed.bind(action))
 		vbox.add_child(button)
 	
-	visible = true
-
 # ---------------------------------------------------------------------------
 
 func hide() -> void:
