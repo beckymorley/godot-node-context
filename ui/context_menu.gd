@@ -14,33 +14,30 @@ func _init() -> void:
 	
 # ---------------------------------------------------------------------------
 
-func show_for_context(actions : Array):
+func show_for_context(handler : NodeContextHandler, selection_context: SelectionContext):
+	_clear()
+	
+	handler.selection_context = selection_context
+	var actions : Array[EditorAction] = handler.get_actions()
+	for action : EditorAction in actions:
+		var children : Array[Node] = vbox.get_children()
+		if !children.has(action.control):
+			vbox.add_child(action.control)
 	
 	visible = true
-	for child : Node in vbox.get_children():
+	
+# ---------------------------------------------------------------------------
+
+func _clear() -> void:
+	var children_to_remove : Array[Node] = vbox.get_children().duplicate()
+	for child : Node in children_to_remove:
+		vbox.remove_child(child)
 		child.queue_free()
-	
-	for action : EditorAction in actions:
-		var button : Button = Button.new()
-		button.text = action.get_name()
-		button.mouse_entered.connect(
-			func():
-				print("HOVER:", button.text)
-		)
 
-		button.pressed.connect(_on_button_pressed.bind(action))
-		vbox.add_child(button)
-	
 # ---------------------------------------------------------------------------
 
-func hide() -> void:
-	visible = false
-	
-# ---------------------------------------------------------------------------
-
-func _on_button_pressed(action):
-	print("button ", action, " pressed")
-	action_selected.emit(action)
+func hide_context() -> void:
+	_clear()
 	visible = false
 
 # ---------------------------------------------------------------------------

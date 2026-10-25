@@ -19,9 +19,7 @@ func _init(p_editor : EditorInterface) -> void:
 
 func _on_selection_changed() -> void:
 	var nodes = selection.get_selected_nodes()
-	print("selection_service.selected_nodes: ", nodes)
 	if nodes.size() > 0:
-		print("selection_service.selected_node = ", selected_node)
 		selected_node = nodes[0]
 	else:
 		selected_node = null

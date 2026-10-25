@@ -41,12 +41,11 @@ func _enter_tree() -> void:
 	parent.add_child(context_menu)
 	
 	selection_service.selection_changed.connect(_on_selection_changed)
-	context_menu.action_selected.connect(_on_action_selected)
 	
 # ---------------------------------------------------------------------------
 
-func _show_context_menu(actions : Array) -> void:
-	context_menu.show_for_context(actions)
+func _show_context_menu(handler, context : SelectionContext) -> void:
+	context_menu.show_for_context(handler, context)
 
 # ---------------------------------------------------------------------------
 
@@ -56,12 +55,12 @@ func _handles(object : Object) -> bool:
 # ---------------------------------------------------------------------------
 
 func _hide_context_menu() -> void:
-	context_menu.hide()
+	context_menu.hide_context()
 
 # ---------------------------------------------------------------------------
 
-func _on_selection_changed(node : Node) -> void:
-	print("_on_selection_changed", node)
+func _on_selection_changed(node ) -> void:
+	print("_on_selection_changed: ", node)
 	print("# ---------------------------------------------------------------------------")
 	if !node:
 		_hide_context_menu()
@@ -72,25 +71,17 @@ func _on_selection_changed(node : Node) -> void:
 		return 
 	
 	selected_node = node
-	var context_actions = NodeContextRegistry.get_actions(selected_node)
-	if context_actions.size() > 0:
-		_show_context_menu(context_actions)
+	var handler = NodeContextRegistry.get_handler(selected_node)
+	if handler:
+		_show_context_menu(handler, action_service.create_context(selected_node))
 		var pos : Vector2 = editor_camera.unproject_position(
 			selected_node.global_position
 		)
 		context_menu.position = pos
 	else:
 		_hide_context_menu()
-		
+	
 	_viewport_input_pending = false
-
-# ---------------------------------------------------------------------------
-
-func _on_action_selected(action : EditorAction) -> void:
-	print("action on ", selected_node)
-	action.execute(
-		action_service.create_context(selected_node)
-	)
 	
 # ---------------------------------------------------------------------------
 
