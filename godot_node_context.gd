@@ -7,10 +7,6 @@ const _ActionService = preload("res://addons/godot-node-context/services/action_
 
 const _ContextMenu = preload("res://addons/godot-node-context/ui/context_menu.gd")
 
-const _DuplicateAction = preload("res://addons/godot-node-context/actions/duplicate_action.gd")
-const _FocusAction = preload("res://addons/godot-node-context/actions/focus_action.gd")
-const _DeleteAction = preload("res://addons/godot-node-context/actions/delete_action.gd")
-
 var selection_service: _SelectionService
 var viewport_service: _ViewportService
 var action_service: _ActionService
