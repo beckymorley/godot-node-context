@@ -62,7 +62,7 @@ func _hide_context_menu() -> void:
 func _on_selection_changed(node ) -> void:
 	print("_on_selection_changed: ", node)
 	print("# ---------------------------------------------------------------------------")
-	if !node is Node:
+	if !node is Node3D:
 		_hide_context_menu()
 		return
 	
